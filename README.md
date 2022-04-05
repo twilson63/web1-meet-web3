@@ -7,10 +7,13 @@ This demo, is to introduce some developers tools in the Arweave ecosystem, that 
 
 In this simple demo, I am going to take a web 1 website and deploy it to the world using the permaweb. And the cool thing about this process is that I will only pay once and be able to host my site forever! Yes! Forever.
 
+---
 
 ## Requirements
 
 In order to get the most out of this tutorial you will need the latest version of NodeJS installed. https://nodejs.org
+
+---
 
 ## Setup the devnet
 
@@ -25,9 +28,14 @@ arlocal
 
 Woohoo, we have a little devnet running that we can use to test our deployment.
 
+---
+
 ## Create a wallet
 
 Lets use https://arweave.app to create a wallet or we could create one programmatically.
+
+
+To create a wallet with https://arweave.app, open the url in your browser and click the plus icon in the bottom left corner. Then click create wallet, once finished generating, click the finish button, and then download your key file. The name of the key file is your public address. This is how you publically reference your wallet on the blockweave.
 
 
 For every transaction in arweave, we need a wallet, in this case we will create a wallet using the `arweave-js` library.
@@ -50,14 +58,18 @@ const arweave = Arweave.init({
 })
 
 arweave.wallets.generate().then(key => 
-  fs.writeFileSync(
-    'wallet.json', 
-    JSON.stringify(key)
+  arweave.wallets.jwkToAddress(key)
+    .then(address =>  fs.writeFileSync(
+      address + '.json', 
+      JSON.stringify(key)
+    )
   )
 )
 ```
 
-Either way we end up with a `wallet.json` file.
+Either way we end up with a `[address].json` file.
+
+---
 
 ## Deploy locally
 
@@ -68,6 +80,24 @@ npm i -g arkb
 arkb deploy public --wallet wallet.json --gateway http://localhost:1984
 ```
 
+Success! You should see a url to check out your permaweb website! 
+
+Yay!
+
+> So how does this work? Arweave has a protocol to create a path-manifest json file, this file contains a json object with each asset as the key and the arweave transaction id as the value. This file informs the gateway that the manifest should be treated like a website and look for the index.html file. You can access the manifest file by using the following https://arweave.net/tx/[addr]/data.json
+
+You can find more about the paths manifest here: https://github.com/ArweaveTeam/arweave/blob/master/doc/path-manifest-schema.md
+
+---
+
 ## Deploy to arweave.net
 
-....
+Now that we have tested our website with our local arweave devnet, we can deploy it to the production https://arweave.net. First we need to send some AR to our wallet. Copy the address from the wallet file. And open a wallet you have that has some AR, and sent to your wallet address $0.50 cents to your wallet. It may take 15 minutes to transfer.
+
+Once transferred then you are ready to push the web site to arweave.net.
+
+```
+arkb deploy public --wallet [address].json
+```
+
+
