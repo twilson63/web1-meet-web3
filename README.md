@@ -28,6 +28,8 @@ arlocal
 
 Woohoo, we have a little devnet running that we can use to test our deployment.
 
+> You can provide options like --hidelogs --persist --dbpath
+
 ---
 
 ## Create a wallet
